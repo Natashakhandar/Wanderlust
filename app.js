@@ -58,6 +58,7 @@ app.get("/listings/new", (req, res) => {
 app.get("/listings/:id", async (req, res) => {
     const {id} = req.params;
     const listing = await Listing.findById(id);
+    console.log(listing.image.url)
     res.render("./listings/show.ejs", {listing});
 });
 
@@ -77,9 +78,16 @@ app.get("/listings/:id/edit", async (req,res) =>{
 
 //UPDATE ROUTE
 app.put("/listings/:id", async (req, res) => {
+    try{
     let {id} = req.params;
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing});
+    const updatedListing = await Listing.findByIdAndUpdate(id, { ...req.body.listing},  { new: true });
+    await updatedListing.save();
+    console.log(updatedListing.image.url)
     res.redirect(`/listings/${id}`);
+    }  catch (error){
+        console.error(error);
+    
+    }
 });    
 
 //DELETE ROUTE
